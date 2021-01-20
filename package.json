@@ -1,0 +1,26 @@
+{
+  "name": "gulp-css-namespacing",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "css-namespacing": "^2.1.1",
+    "gulp-util": "^3.0.8",
+    "schema-utils": "^3.0.0",
+    "through2": "^4.0.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "del": "^6.0.0",
+    "eslint": "^7.18.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "gulp": "^4.0.2",
+    "husky": "^4.3.8"
+  }
+}
