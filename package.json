@@ -2,7 +2,27 @@
   "name": "gulp-css-namespacing",
   "version": "1.0.0",
   "main": "src/index.js",
+  "author": "Hitotsubashi",
   "license": "MIT",
+  "files": [
+    "src/*"
+  ],
+  "keywords": [
+    "plugin",
+    "css",
+    "namespace",
+    "namespacing",
+    "selector",
+    "gulp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hitotsubashi/gulp-css-namespacing.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hitotsubashi/gulp-css-namespacing/issues"
+  },
+  "homepage": "https://github.com/Hitotsubashi/gulp-css-namespacing#readme",
   "dependencies": {
     "css-namespacing": "^2.1.1",
     "gulp-util": "^3.0.8",
