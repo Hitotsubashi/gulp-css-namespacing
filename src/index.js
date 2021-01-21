@@ -1,6 +1,7 @@
 const { PluginError } = require('gulp-util');
 const through = require('through2');
 const ns = require('css-namespacing');
+const pathsep = require('path').sep;
 const validateOptions = require('./validate');
 
 const PLUGIN_NAME = 'gulp-css-namespacing';
@@ -39,7 +40,10 @@ module.exports = function transform(option) {
   return through.obj(function handle(file, encoding, callback) {
     if (file.isBuffer()) {
       const content = file.contents.toString();
-      const matchoption = getOption(file.path, option);
+      const filepath = file.path.split(pathsep).join('/');
+      console.log(filepath);
+      const matchoption = getOption(filepath, option);
+      console.log(matchoption);
       if (matchoption && matchoption.namespace) {
         // eslint-disable-next-line
           file.contents = new Buffer.from(ns(content, matchoption));

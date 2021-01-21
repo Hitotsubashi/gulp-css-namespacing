@@ -1,12 +1,12 @@
-# css-namespacing-loader
+# gulp-css-namespacing
 
-[中文文档](./README_CN.md)
+[中文文档](https://github.com/Hitotsubashi/gulp-css-namespacing/blob/master/README_CN.md)
 
 A WebPack Loader dedicated to handling CSS namespaces. It is based on [css-namespacing](https://www.npmjs.com/package/css-namespacing).
 
-This loader has two functions:
+This plugin has two functions:
 
-- This loader is mainly used to prevent global contamination of styles caused by the introduction of third-party CSS.
+- This plugin is mainly used to prevent global contamination of styles caused by the introduction of third-party CSS.
 
 - During development, when compiling CSS code, it will automatically add namespace to the specified classname according to the options. 
 
@@ -20,36 +20,40 @@ $ npm install gulp-css-namespacing --save-dev
 
 Then add the loader to your `webpack` config. For example:
 
-**entry.js**
+There is a file as followed called `test.css`.
 
-```js
-import 'bootstrap/dist/css/bootstrap.min.css'
+**src/style/test.css**
+```css
+.container-fluid,
+.container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container-fluid {
+  padding-right: 2rem;
+  padding-left: 2rem;
+}
 ```
 
-**webpack.config.js**
+**gulpfile.js**
 
 ```js
+const { src, dest } = require('gulp');
+const cssNamespacing = require('gulp-css-namespacing')
+
+const namespace = () => src('style', { base: 'tests/origin' })
+  .pipe(cssNamespacing([
+    { namespace: 'bsp-', path: [/origin[\\/]tent\.css/], not: [/container/] },
+    { namespace: 'cst-' },
+    // { namespace: 'bsp-', path: [/bootstrap/], only: [/container/] },
+  ]))
+  .pipe(dest('tests/modified'));
+
+const test = series([clean, ns]);
 module.exports = {
-  module: {
-    rules:[
-      {
-        test: /\.css$/i,
-        use: [
-          "style-loader",
-          "css-loader",
-          {
-            loader:"css-namespacing-loader",
-            options:{
-              namespace:[
-                { value: 'bsp-', path: [/bootstrap/] }
-              ]
-            }
-          }
-        ]
-      }
-    ]
-  }
-}
+  test,
+};
 ```
 
 After running `webpack` via your preferred method,when you want to use bootstrap's style,use `bsp-container` instead of `container`,like:
