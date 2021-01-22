@@ -2,7 +2,7 @@
 
 [中文文档](https://github.com/Hitotsubashi/gulp-css-namespacing/blob/master/README_CN.md)
 
-A WebPack Loader dedicated to handling CSS namespaces. It is based on [css-namespacing](https://www.npmjs.com/package/css-namespacing).
+A Gulp Plugin dedicated to handling CSS namespaces. It is based on [css-namespacing](https://www.npmjs.com/package/css-namespacing).
 
 This plugin has two functions:
 
@@ -15,12 +15,31 @@ This plugin has two functions:
 To begin, you'll need to install `gulp-css-namespacing`:
 
 ```console
-$ npm install gulp-css-namespacing --save-dev
+npm install gulp-css-namespacing --save-dev
 ```
 
-Then add the loader to your `webpack` config. For example:
+Then add the plugin to your `gulpfile.js`. For example:
 
-There is a file as followed called `test.css`.
+**gulpfile.js**
+
+```js
+const { src, dest } = require('gulp');
+const cssNamespacing = require('gulp-css-namespacing')
+
+const namespace = () => src('src/style', { base: 'src/style' })
+  .pipe(
+    cssNamespacing([
+      { namespace: 'my-', path: [/test.css/] },
+    ])
+  )
+  .pipe(dest('dist/style',{bases:'dist/style'}));
+
+module.exports = {
+  namespace,
+};
+```
+
+Suppose there is a CSS file as followed called `test.css`.
 
 **src/style/test.css**
 ```css
@@ -36,41 +55,20 @@ There is a file as followed called `test.css`.
 }
 ```
 
-**gulpfile.js**
+After running `yarn gulp test` , the compiled CSS file is as followed.
 
-```js
-const { src, dest } = require('gulp');
-const cssNamespacing = require('gulp-css-namespacing')
+**dist/style/test.css**
+```css
+.my-container-fluid,
+.my-container {
+  margin-right: auto;
+  margin-left: auto;
+}
 
-const namespace = () => src('style', { base: 'tests/origin' })
-  .pipe(cssNamespacing([
-    { namespace: 'bsp-', path: [/origin[\\/]tent\.css/], not: [/container/] },
-    { namespace: 'cst-' },
-    // { namespace: 'bsp-', path: [/bootstrap/], only: [/container/] },
-  ]))
-  .pipe(dest('tests/modified'));
-
-const test = series([clean, ns]);
-module.exports = {
-  test,
-};
-```
-
-After running `webpack` via your preferred method,when you want to use bootstrap's style,use `bsp-container` instead of `container`,like:
-```html
-<div class="bsp-container">
-  <div class="bsp-row">
-    <div class="bsp-col-sm">
-      One of three columns
-    </div>
-    <div class="bsp-col-sm">
-      One of three columns
-    </div>
-    <div class="bsp-col-sm">
-      One of three columns
-    </div>
-  </div>
-</div>
+.my-container-fluid {
+  padding-right: 2rem;
+  padding-left: 2rem;
+}
 ```
 
 In the `options`, you can set which classnames do not need to be prefixed, or only which classnames need to be prefixed, and the value of the namespace.
@@ -79,18 +77,15 @@ In addition, in the CSS code, you can use `@namespacing` flexibly set the above 
 
 If you want to learn more about the result after namespacing, please check [css-namespacing](https://github.com/Hitotsubashi/css-namespacing).
 
-## Options
+## API
 
-|Name|Type|Default|Necessary|Description|
-|----|----|-------|-----------|--|
-|[`namespace`](#namespace)|`{Array}`|`undefined` |`true`|An array containing multiple configurations|
-
-### namespace
+### **cssNamespacing(*options*)**
+### options
 
 Type: `Array`
 Default: `undefined`
 
-element in `namespace` is an object,and it contains the following properties.
+element in `options` is an object,and it contains the following properties.
 
 |Name|Type|Default|Necessary|Description|
 |----|----|-------|-----------|---------|
@@ -103,16 +98,21 @@ element in `namespace` is an object,and it contains the following properties.
 Type: `{Array<String|RegExp>}`
 Default: `undefined`
 
+**Attention: In view of the different situation of file separators caused by different operating platforms, I have done processing to unify the separator to `'/'`.**
+
+Here shows different situation about the difinition of `options`:
+
 **1.use RegExp in Array**
 
 For example:
 
 ```js
-options:{
-  namespace:[
-    { value: 'bsp-', path: [/bootstrap/] }
-  ]
-}
+const options=[
+  { 
+    value: 'bsp-', 
+    path: [/node_modules\/bootstrap/],
+  }
+]
 ```
 
 It will find matched files through `Regexp.prototype.test` like `path.test(filepath)`
@@ -122,27 +122,24 @@ It will find matched files through `Regexp.prototype.test` like `path.test(filep
 For example:
 
 ```js
-options:{
-  namespace:[
-    { value: 'bsp-', path: [path.resolve(___dirname,'./node_modules/bootstrap/dist/css/bootstrap.min.css']) }
-  ]
-}
+const options=[
+  { 
+    value: 'bsp-', 
+    path: ['./node_modules/bootstrap/dist/css/bootstrap.min.css'],
+  }
+]
 ```
 It will find matched files through `String.prototype.includes` like `filepath.includes(path)`
-
-***Attention: It would be better to use path.resolve to get your path thanks to the difference of file separators between window and linux.***
 
 **3.path is not defined**
 
 For example:
 ```js
-options:{
-  namespace:[
-    { 
-      value: 'my-',  
-    }
-  ]
-}
+const options=[
+  { 
+    value: 'my-' 
+  }
+]
 ```
 At this time,it will adds a namespace to the class names of all the scanned CSS files.
 
@@ -153,13 +150,11 @@ Default: `undefined`
 
 if value is `undefined`,for example:
 ```js
-options:{
-  namespace:[
-    { 
-      path:[/bootstrap/]
-    }
-  ]
-}
+const options=[
+  { 
+    path:[/bootstrap/] 
+  }
+]
 ```
 
 At this time,the scanned files will not be processed.
@@ -170,28 +165,24 @@ Default:`undefined`
 
 For example:
 ```js
-options:{
-  namespace:[
-    { 
-      path:[/bootstrap/],
-      not:[/^box$/]
-    }
-  ]
-}
+const options=[
+  {
+    path:[/bootstrap/], 
+    not:[/^box$/],
+  }
+]
 ```
 At this time,all classnames named `box` will not be prefixed with namespace in the code of the CSS file being scanned.
 
 ### only
 For example:
 ```js
-options:{
-  namespace:[
-    { 
-      path:[/bootstrap/],
-      not:[/^box$/]
-    }
-  ]
-}
+const options=[
+  { 
+    path:[/bootstrap/],
+    not:[/^box$/],
+  }
+]
 ```
 At this time,in the code of the CSS file being scanned,only the classname named `box` will be prefixed with namespace
 ## License

@@ -41,9 +41,7 @@ module.exports = function transform(option) {
     if (file.isBuffer()) {
       const content = file.contents.toString();
       const filepath = file.path.split(pathsep).join('/');
-      console.log(filepath);
       const matchoption = getOption(filepath, option);
-      console.log(matchoption);
       if (matchoption && matchoption.namespace) {
         // eslint-disable-next-line
           file.contents = new Buffer.from(ns(content, matchoption));

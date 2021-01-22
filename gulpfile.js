@@ -4,15 +4,26 @@ const cssNamespacing = require('./src');
 
 const clean = () => del(['tests/modified']);
 
-const ns = () => src('tests/origin/*.css', { base: 'tests/origin' })
+const nsfile = () => src('tests/file/origin/*.css', { base: 'tests/file/origin' })
   .pipe(cssNamespacing([
     { namespace: 'bsp-', path: [/\/bootstrap-grid\.css/], not: [/container/] },
     { namespace: 'cst-' },
     { namespace: 'bsp-', path: [/\/bootstrap\.min\.css/], only: [/container/] },
   ]))
-  .pipe(dest('tests/modified'));
+  .pipe(dest('tests/file/modified'));
 
-const test = series([clean, ns]);
+const nsUnit = () => src('tests/unit/origin/*.css', { base: 'tests/unit/origin' })
+  .pipe(cssNamespacing([
+    { namespace: 'en-', path: [/\/origin\/normal\.css/] },
+    { namespace: 'en-', path: [/\/origin\/not\.css/], not: [/container/] },
+    { namespace: 'en-', path: [/\/origin\/only\.css/], only: [/container/] },
+  ]))
+  .pipe(dest('tests/unit/modified'));
+
+const testfile = series([clean, nsfile]);
+const testunit = series([clean, nsUnit]);
+
 module.exports = {
-  test,
+  testfile,
+  testunit,
 };

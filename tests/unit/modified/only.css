@@ -1,0 +1,20 @@
+.box{
+  font-size:1.5em;
+}
+
+.en-container{
+  line-height:1.5em;
+}
+
+.box2{
+  visibility: hidden;
+}
+
+[class="box2"][attr="123.123"]{
+  width:50.5%;
+  background:url('https://imakeup/img.png');
+}
+
+.control-form{
+  padding:.5em 2em .3em .7em;
+}
